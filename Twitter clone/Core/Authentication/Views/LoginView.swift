@@ -10,14 +10,15 @@ import SwiftUI
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
+    @EnvironmentObject var viewModel: AuthViewModel
     
     var body: some View {
         VStack {
             AuthHeaderView(title: "Welcome Back!\nLog in to Twitter")
             
             VStack(spacing: 40) {
-                CustomInputFieldView(imageName: "envelope", placeholder: "Email", text: $email)
-                CustomInputFieldView(imageName: "lock", placeholder: "Password", text: $password)
+                CustomInputFieldView(imageName: "envelope", placeholder: "Email", text: $email, isSecured: false)
+                CustomInputFieldView(imageName: "lock", placeholder: "Password", text: $password, isSecured: true)
             }
             .padding(.horizontal, 32)
             .padding(.top, 44)
@@ -38,7 +39,7 @@ struct LoginView: View {
             }
             
             Button {
-                // sign in
+                viewModel.login(withEmail: email, password: password)
             } label: {
                 Text("Sign in")
                     .font(.headline)

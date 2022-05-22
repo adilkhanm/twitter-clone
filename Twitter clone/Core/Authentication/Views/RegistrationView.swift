@@ -12,22 +12,24 @@ struct RegistrationView: View {
     @State private var username = ""
     @State private var fullname = ""
     @State private var password = ""
+    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var viewModel: AuthViewModel
     
     var body: some View {
         VStack {
             AuthHeaderView(title: "See what's happening in the world right now.")
             
             VStack(spacing: 40) {
-                CustomInputFieldView(imageName: "envelope", placeholder: "Email", text: $email)
-                CustomInputFieldView(imageName: "person", placeholder: "Username", text: $password)
-                CustomInputFieldView(imageName: "person", placeholder: "Full name", text: $email)
-                CustomInputFieldView(imageName: "lock", placeholder: "Password", text: $password)
+                CustomInputFieldView(imageName: "envelope", placeholder: "Email", text: $email, isSecured: false)
+                CustomInputFieldView(imageName: "person", placeholder: "Username", text: $username, isSecured: false)
+                CustomInputFieldView(imageName: "person", placeholder: "Full name", text: $fullname, isSecured: false)
+                CustomInputFieldView(imageName: "lock", placeholder: "Password", text: $password, isSecured: true)
             }
             .padding(.horizontal, 32)
             .padding(.top, 44)
             
             Button {
-                // sign up
+                viewModel.register(withEmail: email, username: username, fullname: fullname, password: password)
             } label: {
                 Text("Sign up")
                     .font(.headline)
@@ -41,9 +43,8 @@ struct RegistrationView: View {
             
             Spacer()
             
-            NavigationLink {
-                LoginView()
-                    .navigationBarHidden(true)
+            Button {
+                presentationMode.wrappedValue.dismiss()
             } label: {
                 HStack {
                     Text("Already have an account?")

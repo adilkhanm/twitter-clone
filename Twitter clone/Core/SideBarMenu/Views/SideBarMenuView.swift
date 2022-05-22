@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SideBarMenuView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
     var body: some View {
         
         VStack(alignment: .leading, spacing: 16) {
@@ -29,7 +31,7 @@ struct SideBarMenuView: View {
             }
             .padding(.leading)
             
-            ForEach(SideMenuBarViewModel.allCases, id: \.rawValue) { viewModel in
+            ForEach(SideBarMenuViewModel.allCases, id: \.rawValue) { viewModel in
                 switch viewModel {
                 case .profile:
                     NavigationLink {
@@ -39,7 +41,7 @@ struct SideBarMenuView: View {
                     }
                 case .logout:
                     Button {
-                        print("logging out..")
+                        authViewModel.signOut()
                     } label: {
                         SideBarMenuCellView(viewModel: viewModel)
                     }

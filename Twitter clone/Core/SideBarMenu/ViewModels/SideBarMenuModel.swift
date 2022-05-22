@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SideMenuBarViewModel: Int, CaseIterable {
+enum SideBarMenuViewModel: Int, CaseIterable {
     case profile
     case lists
     case bookmarks

@@ -9,8 +9,27 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var menuIsActive = false
+    @EnvironmentObject var viewModel: AuthViewModel
     
     var body: some View {
+        Group {
+            if viewModel.userSession == nil {
+                LoginView()
+            } else {
+                mainInterfaceView
+            }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}
+
+extension ContentView {
+    var mainInterfaceView: some View {
         ZStack(alignment: .topLeading) {
             MainTabView()
                 .navigationBarHidden(menuIsActive)
@@ -32,7 +51,7 @@ struct ContentView: View {
                 .offset(x: menuIsActive ? 0 : -300, y: 0)
                 .background(menuIsActive ? Color.white : Color.clear)
         }
-        .navigationTitle("Feed")
+        .navigationTitle("Main")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -49,11 +68,5 @@ struct ContentView: View {
         .onAppear() {
             menuIsActive = false
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
