@@ -17,6 +17,9 @@ struct RegistrationView: View {
     
     var body: some View {
         VStack {
+            
+            NavigationLink(destination: ProfilePhotoSelectView(), isActive: $viewModel.didAuthenticateUser, label: { })
+            
             AuthHeaderView(title: "See what's happening in the world right now.")
             
             VStack(spacing: 40) {
@@ -31,13 +34,7 @@ struct RegistrationView: View {
             Button {
                 viewModel.register(withEmail: email, username: username, fullname: fullname, password: password)
             } label: {
-                Text("Sign up")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 340, height: 50)
-                    .background(Color(.systemBlue))
-                    .clipShape(Capsule())
-                    .padding()
+                Utilities.getButtonText(withText: "Sign up")
             }
             .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 0)
             

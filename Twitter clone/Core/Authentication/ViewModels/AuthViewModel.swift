@@ -10,6 +10,8 @@ import Firebase
 
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
+    @Published var didAuthenticateUser = false
+    private var temporarySession: FirebaseAuth.User?
     
     init() {
         self.userSession = Auth.auth().currentUser
@@ -38,11 +40,11 @@ class AuthViewModel: ObservableObject {
             }
             
             guard let user = result?.user else { return }
-            self.userSession = user
+            self.temporarySession = user
             
             let data = ["email": email,
                         "username": username,
-                        "password": password,
+                        "fullname": fullname,
                         "uid": user.uid]
             
             Firestore.firestore().collection("users").document(user.uid).setData(data) { error in
@@ -52,6 +54,7 @@ class AuthViewModel: ObservableObject {
                 }
                 
                 print("INFO: user data was saved!")
+                self.didAuthenticateUser = true
             }
         }
     }
@@ -59,5 +62,21 @@ class AuthViewModel: ObservableObject {
     func signOut() {
         userSession = nil
         try? Auth.auth().signOut()
+        
+        self.didAuthenticateUser = false
+    }
+    
+    func uploadProfileImage(_ image: UIImage) {
+        guard let uid = temporarySession?.uid else { return }
+        ImageUploader.uploadImage(image: image) { profileImageUrl in
+            Firestore.firestore().collection("users").document(uid)
+                .updateData(["profileImageUrl": profileImageUrl]) { error in
+                    if let error = error {
+                        print("DEBUG: failed to save profile image url: \(error)")
+                        return
+                    }
+                    self.userSession = self.temporarySession
+            }
+        }
     }
 }
