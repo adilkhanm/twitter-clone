@@ -8,16 +8,21 @@
 import SwiftUI
 
 struct TweetCellView: View {
-    let tweet: Tweet
+    @ObservedObject var viewModel: TweetCellViewModel
+    
+    init(tweet: Tweet) {
+        self.viewModel = TweetCellViewModel(tweet: tweet)
+    }
     
     var body: some View {
-        if let user = tweet.user {
+        if let user = viewModel.tweet.user {
             VStack {
                 HStack(alignment: .top, spacing: 12) {
-                    Utilities.getImage(fromUrl: user.profileImageUrl, width: 56, height: 56)
-//                    Circle()
-//                        .frame(width: 56, height: 56)
-//                        .foregroundColor(Color(.systemBlue))
+                    NavigationLink {
+                        ProfileView(user: user)
+                    } label: {
+                        Utilities.getImage(fromUrl: user.profileImageUrl, width: 56, height: 56)
+                    }
                     
                     VStack(alignment: .leading, spacing: 10) {
                 
@@ -35,7 +40,7 @@ struct TweetCellView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        Text(tweet.text)
+                        Text(viewModel.tweet.text)
                             .font(.subheadline)
                             .multilineTextAlignment(.leading)
                         
@@ -45,6 +50,9 @@ struct TweetCellView: View {
                             } label: {
                                 Image(systemName: "bubble.left")
                                     .font(.subheadline)
+                                
+                                Text("0")
+                                    .font(.caption)
                             }
                             
                             Button {
@@ -55,10 +63,18 @@ struct TweetCellView: View {
                             }
                             
                             Button {
-                                // like
+                                if viewModel.tweet.didLike ?? false {
+                                    viewModel.unlikeTweet()
+                                } else {
+                                    viewModel.likeTweet()
+                                }
                             } label: {
-                                Image(systemName: "heart")
+                                Image(systemName: viewModel.tweet.didLike ?? false ? "heart.fill" : "heart")
                                     .font(.subheadline)
+                                    .foregroundColor(viewModel.tweet.didLike ?? false ? .red : .gray)
+                                
+                                Text(String(viewModel.tweet.likes))
+                                    .font(.caption)
                             }
                             
                             Button {

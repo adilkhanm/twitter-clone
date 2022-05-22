@@ -15,8 +15,6 @@ class NewTweetViewModel: ObservableObject {
         service.uploadTweet(text: text) { success in
             if success {
                 self.didUploadTweet = true
-            } else {
-                
             }
         }
     }

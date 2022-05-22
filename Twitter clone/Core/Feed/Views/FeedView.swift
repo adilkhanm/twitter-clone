@@ -35,6 +35,9 @@ struct FeedView: View {
             .padding()
             .fullScreenCover(isPresented: $showNewTweetView) {
                 NewTweetView()
+                    .onDisappear {
+                        viewModel.fetchTweets()
+                    }
             }
         }
     }

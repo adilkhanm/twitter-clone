@@ -10,6 +10,7 @@ import Firebase
 struct UserService {
     
     static let collectionName = "users"
+    static let likesCollectionName = "user_likes"
     
     func fetchUser(withUid uid: String, completion: @escaping (User) -> Void) {
         Firestore.firestore().collection(UserService.collectionName)

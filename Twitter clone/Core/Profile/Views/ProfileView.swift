@@ -10,11 +10,13 @@ import Kingfisher
 
 struct ProfileView: View {
     @State private var selectedFilter: TweetFilterViewModel = .tweets
+    @ObservedObject var viewModel: ProfileViewModel
+    
     @Environment(\.presentationMode) var mode
-    private let user: User
+//    private let user: User
     
     init(user: User) {
-        self.user = user
+        self.viewModel = ProfileViewModel(user: user)
     }
     
     var body: some View {
@@ -62,7 +64,7 @@ extension ProfileView {
                         .offset(x: -6, y: 12)
                 }
 
-                Utilities.getImage(fromUrl: user.profileImageUrl, width: 66, height: 66)
+                Utilities.getImage(fromUrl: viewModel.user.profileImageUrl, width: 66, height: 66)
                     .offset(x: 12, y: 36)
             }
         }
@@ -76,7 +78,7 @@ extension ProfileView {
             Button {
                 // edit profile
             } label: {
-                Text("Edit profile")
+                Text(viewModel.actionButtonTitle)
                     .font(.subheadline).bold()
                     .frame(width: 120, height: 32)
                     .foregroundColor(.black)
@@ -89,10 +91,10 @@ extension ProfileView {
      
     var userInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(user.fullname)
+            Text(viewModel.user.fullname)
                 .font(.title2).bold()
             
-            Text("@\(user.username)")
+            Text("@\(viewModel.user.username)")
                 .font(.subheadline)
                 .foregroundColor(.gray)
             
@@ -154,8 +156,8 @@ extension ProfileView {
     var filterBody: some View {
         ScrollView {
             LazyVStack {
-                ForEach(0 ... 9, id: \.self) { _ in
-//                    TweetCellView()
+                ForEach(viewModel.tweets(forFilter: self.selectedFilter)) { tweet in
+                    TweetCellView(tweet: tweet)
                 }
             }
         }
