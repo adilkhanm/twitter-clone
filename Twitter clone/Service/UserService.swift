@@ -9,8 +9,10 @@ import Firebase
 
 struct UserService {
     
+    static let collectionName = "users"
+    
     func fetchUser(withUid uid: String, completion: @escaping (User) -> Void) {
-        Firestore.firestore().collection("users")
+        Firestore.firestore().collection(UserService.collectionName)
             .document(uid)
             .getDocument { snapshot, error in
                 if let error = error {
@@ -27,7 +29,7 @@ struct UserService {
     }
     
     func fetchUsers(completion: @escaping([User]) -> Void) {
-        Firestore.firestore().collection("users")
+        Firestore.firestore().collection(UserService.collectionName)
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: failed to fetch users: \(error.localizedDescription)")

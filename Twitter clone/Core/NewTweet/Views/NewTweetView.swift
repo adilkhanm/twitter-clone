@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct NewTweetView: View {
-    @State private var caption = ""
+    @State private var text = ""
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var viewModel = NewTweetViewModel()
     
     var body: some View {
         VStack {
@@ -24,7 +26,7 @@ struct NewTweetView: View {
                 Spacer()
                 
                 Button {
-                    // tweet
+                    viewModel.uploadTweet(withText: text)
                 } label: {
                     Text("Tweet")
                         .padding(.horizontal)
@@ -37,12 +39,18 @@ struct NewTweetView: View {
             .padding()
             
             HStack(alignment: .top) {
-                Circle()
-                    .frame(width: 64, height: 64)
+                if let user = authViewModel.currentUser {
+                    Utilities.getImage(fromUrl: user.profileImageUrl, width: 64, height: 64)
+                }
                 
-                TextArea("Your tweet goes here..", text: $caption)
+                TextArea("Your tweet goes here..", text: $text)
             }
             .padding()
+        }
+        .onReceive(viewModel.$didUploadTweet) { success in
+            if success {
+                presentationMode.wrappedValue.dismiss()
+            }
         }
     }
 }
