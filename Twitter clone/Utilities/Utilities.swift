@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 class Utilities {
     
@@ -17,6 +18,15 @@ class Utilities {
             .background(Color(.systemBlue))
             .clipShape(Capsule())
             .padding()
+    }
+    
+    static func getImage(fromUrl url: String, width: CGFloat, height: CGFloat) -> some View {
+        KFImage(URL(string: url))
+            .resizable()
+            .scaledToFit()
+            .background(Color.black)
+            .frame(width: width, height: height)
+            .clipShape(Circle())
     }
     
 }

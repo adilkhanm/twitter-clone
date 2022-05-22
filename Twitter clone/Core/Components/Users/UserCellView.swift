@@ -8,17 +8,18 @@
 import SwiftUI
 
 struct UserCellView: View {
+    let user: User
+    
     var body: some View {
         HStack(spacing: 15) {
-            Circle()
-                .frame(width: 50, height: 50)
+            Utilities.getImage(fromUrl: user.profileImageUrl, width: 50, height: 50)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Adilkhan Muratov")
+                Text(user.fullname)
                     .font(.subheadline).bold()
                     .foregroundColor(.black)
                 
-                Text("@adilkhanm")
+                Text("@\(user.username)")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -30,8 +31,8 @@ struct UserCellView: View {
     }
 }
 
-struct UserCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserCellView()
-    }
-}
+//struct UserCellView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        UserCellView()
+//    }
+//}

@@ -11,12 +11,16 @@ import Firebase
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var didAuthenticateUser = false
+    @Published var currentUser: User?
+    
     private var temporarySession: FirebaseAuth.User?
+    
+    private let service = UserService()
     
     init() {
         self.userSession = Auth.auth().currentUser
-        
-        print("INFO: current user session is \(self.userSession?.uid)")
+        self.fetchUser()
+//        print("INFO: current user session is \(self.userSession?.uid)")
     }
     
     func login(withEmail email: String, password: String) {
@@ -28,6 +32,7 @@ class AuthViewModel: ObservableObject {
             
             guard let user = result?.user else { return }
             self.userSession = user
+            self.fetchUser()
         }
             
     }
@@ -44,8 +49,7 @@ class AuthViewModel: ObservableObject {
             
             let data = ["email": email,
                         "username": username,
-                        "fullname": fullname,
-                        "uid": user.uid]
+                        "fullname": fullname]
             
             Firestore.firestore().collection("users").document(user.uid).setData(data) { error in
                 if let error = error {
@@ -76,7 +80,15 @@ class AuthViewModel: ObservableObject {
                         return
                     }
                     self.userSession = self.temporarySession
+                    self.fetchUser()
             }
+        }
+    }
+    
+    func fetchUser() {
+        guard let uid = self.userSession?.uid else { return }
+        service.fetchUser(withUid: uid) { user in
+            self.currentUser = user
         }
     }
 }
